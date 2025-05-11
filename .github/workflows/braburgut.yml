@@ -1,0 +1,34 @@
+name: braburgut-issues
+on:
+  issues:
+    types: [opened]
+  project_card:
+    types: [moved]
+  workflow_dispatch:
+
+jobs:
+  analyze-issue-event:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Mostrar información del evento
+        run: |
+          echo "📌 Evento recibido: ${{ github.event_name }}"
+          echo "📁 Repositorio: ${{ github.repository }}"
+          echo "👤 Ejecutado por: ${{ github.actor }}"
+          echo "📅 Acción sobre el issue o tarjeta: ${{ github.event.action }}"
+
+      - name: Mostrar datos del issue (si aplica)
+        if: github.event.issue != null
+        run: |
+          echo "🧾 Título del issue: ${{ github.event.issue.title }}"
+          echo "📋 Descripción: ${{ github.event.issue.body }}"
+          echo "🔢 Número del issue: #${{ github.event.issue.number }}"
+          echo "📆 Estado: ${{ github.event.issue.state }}"
+
+      - name: Acción externa - Usar github-script para imprimir fecha
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const now = new Date().toISOString();
+            console.log(`🕒 Fecha y hora de ejecución: ${now}`);
